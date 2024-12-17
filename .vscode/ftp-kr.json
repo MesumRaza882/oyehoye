@@ -1,0 +1,20 @@
+{
+    "host": "145.223.90.127",
+    "username": "mesum-ftp",
+    "password": "DtuWtNOq0rwHYaV6spt5",
+    "remotePath": "",
+    "protocol": "ftp",
+    "port": 21,
+    "fileNameEncoding": "utf8",
+    "autoUpload": false,
+    "autoDelete": false,
+    "autoDownload": false,
+    "ignore": [
+        ".git",
+        "/.vscode",
+        "/storage/framework",
+        "/storage/logs",
+        "/storage/debugbar",
+        "/vendor"
+    ]
+}

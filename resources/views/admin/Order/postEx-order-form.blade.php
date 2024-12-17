@@ -202,43 +202,6 @@
 
 
             let formdata = new FormData($('#orderdonePostEx')[0]);
-
-            if (auth_id != 1) {
-                // Get the current URL
-                // const currentUrl = window.location.href;
-                // const urlSegments = currentUrl.split('/');
-                // urlSegments.splice(-3, 3);
-                // const newUrl = urlSegments.join('/');
-                // const queryParams = new URLSearchParams();
-                // queryParams.set('status', 'PENDING');
-                // const finalUrl = `${newUrl}/seller/getWebOrders?is_partner=1?${queryParams.toString()}`;
-                // window.location.href = finalUrl;
-
-                Swal.fire({
-                    title: 'Order Dispatched',
-                    text: 'The order has been successfully dispatched. Do you want to view pending orders?',
-                    icon: 'success',
-                    showCancelButton: true,
-                    confirmButtonText: 'View Pending Orders',
-                    cancelButtonText: 'Stay Here'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "{!! route('waoseller.getWebOrders', ['is_partner' => 1, 'status' => 'PENDING']) !!}";
-                    }
-                });
-
-            } else {
-                // Get the current URL
-                const currentUrl = window.location.href;
-                const urlSegments = currentUrl.split('/');
-                urlSegments.splice(-2, 2);
-                const newUrl = urlSegments.join('/');
-                const queryParams = new URLSearchParams();
-                queryParams.set('status', 'PENDING');
-                const finalUrl =
-                    `${newUrl}/allorders?${queryParams.toString()}&is_reseller_order=${is_reseller_order}`;
-                window.location.href = finalUrl;
-            }
             $.ajax({
                 type: "POST",
                 url: "{{ route('DispatchOrderPostEx') }}",
