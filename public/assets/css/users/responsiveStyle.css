@@ -1,0 +1,27 @@
+/* media */
+@media (max-width: 768px) { 
+        .header{
+        padding: 10px 0px;
+    }
+    .header .img-container{
+        left:0%;
+        top:0%;
+        transform: translate(0%,-8%);
+        
+    }
+    .header .img-container img{
+        width:80px;
+        height:80px;
+    }
+    .top_contact button{
+        font-size:11px;
+        padding:6px 2px !important;
+    }
+
+    /* item category section ***********************/
+    .category_item_section .item-container .img-container img{
+        height: 100px !important;
+    }
+
+}
+

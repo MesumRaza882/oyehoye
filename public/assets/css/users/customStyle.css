@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@1,300&display=swap');
+
+*, :after, :before {
+    box-sizing: border-box;
+}
+:root{
+    /* background color .............................................*/
+    --primary-color:#0098DB;
+    /* Text color ...................................................*/
+    --primary-font:"poppins",sans-serif;
+}
+
+body {
+    /* font-family: var(--primary-font); */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+    /* background: var(--bg-white); */
+    color: var(--text-black);
+    overflow-x: hidden;
+}
+
+/* Custom CSS ...................................................*/
+a,
+a:hover{
+    text-decoration: none;
+    cursor: pointer;
+}
+p{
+    margin: 0;
+}
+section{
+    padding: 60px 0px;
+}
+/* top */
+.header{
+    background-color:#E8E7EA;
+    padding: 13px 0px;
+}
+.btn-design{
+    background-color:#0098DB !important;
+    border-radius:6px;
+}
+.header .img-container{
+    left:50%;
+    top:0%;
+    transform: translate(0%,-5%);
+}
+
+/* main section category item design ********************************* */
+.category_item_section h2{
+    font-weight: 600;
+    font-size: 2.3rem;
+}
+.category_item_section .item-container{
+    box-shadow: rgba(80, 80, 88, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+    padding: 8px 16px 8px 6px;
+}
+/* name + price + category */
+.category_item_section .item-container h5{
+    font-size: 1.2rem !important;
+    color: rgb(33, 37, 41);
+}
+
+.category_item_section .item-container p{
+    font-weight: 600;
+}
+.category_item_section .item-container .auto_sale{
+    text-transform: capitalize;
+    font-size: 12px;
+    color:  rgb(51, 60, 70);
+    letter-spacing: 1px;
+}
+
+/* image */
+.category_item_section .item-container .img-container img{
+    border-radius: 20px;
+    height: 125px !important;
+    max-width: 100%;
+}
+.dc_free_badge{
+    position: absolute;
+    top: -12%;
+    left: 85%;
+}
+.dc_free_badge span{
+    font-size: 11px !important;
+    background-color: var(--primary-color);
+}
+/* button */
+.category_item_section .cart_btn_div button{
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    border: none;
+    position: relative;
+}
+.category_item_section .cart_btn_div i{
+    font-size: 11px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
