@@ -40,7 +40,7 @@
                                 </div>
 
                                 <div class="col-md-6 border border-success p-2">
-                                    <div class="form-group mb-0">
+                                    <div class="form-group mb-2">
                                         <label for="balance">Balance</label>
                                         <input type="number" min="1" name="balance" class="form-control" placeholder="Enter balance">
                                     </div>
@@ -50,14 +50,30 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 border border-warning p-2">
-                                    <div class="form-group mb-0">
+                                <div class="col-md-6 border border-danger p-2">
+                                    <div class="form-group mb-2">
                                         <label for="deductBalance" class="text-danger">Deduct Balance</label>
                                         <input type="number" min="1" name="deductBalance" class="form-control" placeholder="Enter balance for deduction">
                                     </div>
                                     <div>
                                         <label for="deduct_balance_note">Enter Note For Deduct Add</label>
                                         <textarea name="deduct_balance_note" id="deduct_balance_note" class="form-control"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 border border-warning p-2">
+                                    <div class="form-group mb-2">
+                                        <label for="restrict_inventory" class="text-warning">Restrict Balance Low</label>
+                                        <input type="number" min="1" value="{{$seller->restrict_inventory}}" name="restrict_inventory" class="form-control" placeholder="balance for Restriction">
+                                    </div>
+                                    <div>
+                                        <label for="profit_deduction_percentage">Profit Deduction Percentage</label>
+                                        <input name="profit_deduction_percentage" value="{{$seller->profit_deduction_percentage}}" id="profit_deduction_percentage"  placeholder="Deduction Profit %" class="form-control" />
+                                    </div>
+
+                                    <div class="d-flex align-items-center mt-2">
+                                        <label for="is_applied_restrict_inventory" class="fw-bold">Is Applied Restrict Inventory</label>
+                                        <input type="checkbox" id="is_applied_restrict_inventory" {{$seller->is_applied_restrict_inventory === 1 ? 'checked' : ''}} name="is_applied_restrict_inventory" class="ms-2">
                                     </div>
                                 </div>
 
@@ -160,7 +176,7 @@
                                                     {{ $code->postEx_pickupAddressCode }}
                                                 </option>
                                             @endforeach
-                                        </select>   
+                                        </select>
                                     </div>
 
                                     <div class="d-flex align-items-center">

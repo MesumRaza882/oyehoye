@@ -155,7 +155,7 @@ class WaoInventoryController extends Controller
                 // if current user not super admin then partner login means
                 'controlled_by_admin' => auth()->user()->role != 1 ? auth()->user()->id : 1,
             ]);
-            // for resellers/partners current active products add 
+            // for resellers/partners current active products add
             if($admin->role === 3)
             {
                 $products = Product::select(['id','price','profit','specific_reseller_profit','reseller_price','soldstatus'])->filterStatus(1)->Wherehas('itemcategory')->get();
@@ -236,6 +236,10 @@ class WaoInventoryController extends Controller
                 'color_5' => $request->color_5 ? $request->color_5 : $seller->color_5,
                 'website' => $request->website ? $request->website : $seller->website,
                 'controlled_by_admin' => auth()->user()->role != 1 ? auth()->user()->id : 1,
+                // balance inventory restrict
+                'is_applied_restrict_inventory' => $request->is_applied_restrict_inventory  === 'on' ? 1 : 2,
+                'restrict_inventory' => $request->restrict_inventory,
+                'profit_deduction_percentage' => $request->profit_deduction_percentage,
             ];
             $seller->update($data);
 

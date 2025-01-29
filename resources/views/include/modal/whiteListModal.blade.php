@@ -417,7 +417,7 @@
                         })
                         .then(data => {
                             console.log(data.imageUrl);
-                            // change the image src 
+                            // change the image src
                             slipImage.src = data.imageUrl;
 
                             var slipAnchor = document.getElementById('slipAnchor');
@@ -618,7 +618,16 @@
                         $('#slip-order-date').text(formattedDate);
                         $('#slip-order-remarks').text($('#transactionNotes').val());
 
-                        toastr.success(response.message);
+                        if (response.status == 2) {
+                            toastr.success(response.message);
+                        } else {
+                            Swal.fire({
+                                title: "Order Dispatched",
+                                text: response.message,
+                                icon: "warning",
+                                confirmButtonText: "OK",
+                            })
+                        }
 
                         // // generate slip
                         makeSlip(response.data.orderId, $('#consignee_whatsaapp').val());
@@ -635,7 +644,7 @@
                         toastr.error(response.data);
 
                     }
-                    // for wareteam member 
+                    // for wareteam member
                     else if (response.status == 4) {
                         toastr.success(response.message);
                         $('#orderdone :input:not([name="courier_option"],[name="estimated_weight"],[name="mnp_username"],[name="mnp_password"],[name="locationID"],[name="pickup_address_id"])')

@@ -18,7 +18,7 @@ class Admin extends Authenticatable
     SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    // role 1 for Super admin(id is 1 means super admin otherwise as a manager) 
+    // role 1 for Super admin(id is 1 means super admin otherwise as a manager)
     // role 3 for wao reseller
     // role 4 for team-member of partner controlled
 
@@ -33,6 +33,7 @@ class Admin extends Authenticatable
          'role','postEx_pickupAddressCode','postEx_apiToken','trax_pickup_address_id','trax_api_key','product_upload_status','balance',
          'postEx_apiToken_nowshera','postEx_pickupAddressCode_nowshera','color_1','color_1','color_2','color_3','color_4','color_5','logo','website','whatsapp_number',
          'controlled_by_admin','restrictBalance','isRestrictBalance',
+         'is_applied_restrict_inventory','restrict_inventory','profit_deduction_percentage',
     ];
 
     public function orders()

@@ -28,7 +28,7 @@ class WaoInventoryOrderController extends Controller
         // $orderHistoryStatus = in_array($status, ['PENDING', 'DISPATCHED', 'DELIVERED', 'ON-THE-WAY', 'RETURNED', 'CANCEL']) ? '' : $status;
 
         $startdate = $req->fromDate;
-        //temporary set for dummyadmin 
+        //temporary set for dummyadmin
         $enddate =  $req->toDate;
         if (auth()->user()->id == 58) {
             $enddate = '2024-06-05';
@@ -70,7 +70,7 @@ class WaoInventoryOrderController extends Controller
         if ($req->filterOrderIds) {
             $records->whereIn('id', $ids);
         }
-        // is Seller or warehouse team member then get his own order or if admin then get all orders 
+        // is Seller or warehouse team member then get his own order or if admin then get all orders
         if (in_array(auth()->user()->role, [3, 4])) {
             $records->where('wao_seller_id', auth()->user()->id);
         }
@@ -317,7 +317,6 @@ class WaoInventoryOrderController extends Controller
     // create Order For PostEx
     public function storePostEx(SellerOrderRequestPostEx $req)
     {
-        
         try {
             DB::beginTransaction();
 
@@ -392,8 +391,15 @@ class WaoInventoryOrderController extends Controller
             }
 
             $data = $this->createOrderAndUserDetail($req, $city_post, $response, 'postEx');
+
             DB::commit();
-            return $this->success($data, 'Order for Post-Ex Dispatched Successfully', 2);
+
+            if ($data['message'] === "notDeductProfit") {
+                return $this->success($data, 'Order for Post-Ex Dispatched Successfully', 2);
+            } else {
+                return $this->success([], $data['message'], 5);
+            }
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
@@ -403,7 +409,7 @@ class WaoInventoryOrderController extends Controller
     // create Order For PostEx
     public function storeWareHouse(WarehouseTeamRequest $req)
     {
-        
+
         try {
             DB::beginTransaction();
 
@@ -419,7 +425,7 @@ class WaoInventoryOrderController extends Controller
             // if ($req->purchaseTotal > auth()->user()->balance) {
             //     return $this->success('You have insufficient balance to dispatch this order', 'Courier Error', 3);
             // }
-            // check restrict balance 
+            // check restrict balance
             if (auth()->user()->isRestrictBalance && ($req->purchaseTotal + auth()->user()->balance) < auth()->user()->restrictBalance) {
                 return $this->success('You have restrict to retain your balance', 'Courier Error', 3);
             }
@@ -581,17 +587,37 @@ class WaoInventoryOrderController extends Controller
 
         if ($newOrder) {
 
+            $reseller = Admin::find(auth()->user()->id);
+
+            // Calculate remaining balance and apply deduction logic
+            $remainingBalance = $reseller->balance - $req->purchaseTotal;
+            $restrictInventory = $reseller->restrict_inventory;
+            $profitDeductionPercentage = $reseller->profit_deduction_percentage;
+            $profitAmount = $newOrder->grandProfit ?? 0;
+
+            $extraDeduction = 0;
+            $deductionMessage = '';
+
+            if ($reseller->is_applied_restrict_inventory === 1) {
+                if ($remainingBalance < $restrictInventory) {
+                    $extraDeduction = ($profitAmount * $profitDeductionPercentage) / 100;
+                    $deductionMessage = "Your balance is below the restriction threshold. Rs: " . number_format($extraDeduction) . " extra has been deducted from profit.";
+                    $remainingBalance -= $extraDeduction;
+                }
+            }
+
+            $reseller->update([
+                'balance' => $remainingBalance,
+            ]);
+
             ResellerAmountHistory::create([
-                'admin_id' => auth()->user()->id,
+                'admin_id' => $reseller->id,
                 'order_id' => $newOrder->id,
-                'balance' => $req->purchaseTotal,
+                'balance' => $req->purchaseTotal + $extraDeduction,
                 'status' => 'dispatch',
             ]);
 
-            $reseller = Admin::find(auth()->user()->id);
-            $reseller->update([
-                'balance' => $reseller->balance - $req->purchaseTotal,
-            ]);
+
 
 
             // insertOrderItems
@@ -621,6 +647,7 @@ class WaoInventoryOrderController extends Controller
         $data = [
             'orderId' => $newOrder->id,
             'courier_tracking_id' => $newOrder->courier_tracking_id,
+            'message' => $deductionMessage ?: 'notDeductProfit',
         ];
 
         return $data;
@@ -708,11 +735,11 @@ class WaoInventoryOrderController extends Controller
                         ->first();
                     $profit = $specificResellerProfit ? $specificResellerProfit->profit : $product->profit;
                     $total += $product->price * $article['count'];
-                    /** calculate purchaseTotal 
-                     * all products purchase amount + new yark product charge per suit(35 per product) + 
+                    /** calculate purchaseTotal
+                     * all products purchase amount + new yark product charge per suit(35 per product) +
                      * on order charge(25 rs per order)
                      * if user has specific profit and less than orignal profit
-                     *  then deduct from origanl profit and resulting profit also add 
+                     *  then deduct from origanl profit and resulting profit also add
                      * */
 
                     if ($specificResellerProfit && $product->profit > $profit) {
