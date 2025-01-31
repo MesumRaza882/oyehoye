@@ -17,6 +17,7 @@ class MainController extends Controller
 {
     public function getUsers(Request $req)
     {
+        $this->authorize('view_users');
         $paginate_record = $req->records ? $req->records : 50;
         $startdate = $req->fromDate;
         $enddate =  $req->toDate;
@@ -356,7 +357,7 @@ class MainController extends Controller
         $purchaseTotal = 0;
 
         // return $order->orderitems;
-        // calculate deducting balance from admin 
+        // calculate deducting balance from admin
         foreach ($order->orderitems as $item) {
             // Assuming you have a Product model with an 'article_id' and 'price' column
             $product = Product::where('id', $item->prod_id)->select(['id', 'price', 'profit', 'purchase'])->first();
@@ -371,11 +372,11 @@ class MainController extends Controller
                     ->first();
                 $profit = $specificResellerProfit ? $specificResellerProfit->profit : $product->profit;
 
-                /** calculate purchaseTotal 
-                 * all products purchase amount + new yark product charge per suit(35 per product) + 
+                /** calculate purchaseTotal
+                 * all products purchase amount + new yark product charge per suit(35 per product) +
                  * on order charge(25 rs per order)
                  * if user has specific profit and less than orignal profit
-                 *  then deduct from origanl profit and resulting profit also add 
+                 *  then deduct from origanl profit and resulting profit also add
                  * */
 
                 if ($specificResellerProfit && $product->profit > $profit) {
@@ -427,7 +428,7 @@ class MainController extends Controller
             ]);
         }
 
-        // BLOCK & Hold Order 
+        // BLOCK & Hold Order
         if ($req->status == 'BLOCK_HOLD') {
             $customer = User::find($req->customer_id);
             $customer->status = 1;

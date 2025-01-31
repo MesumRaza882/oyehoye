@@ -112,8 +112,8 @@
                                 </div>
 
 
-                                <!-- permissions for managers -->
-                                @if ($seller->role === 1)
+                                <!-- permissions for managers or partners -->
+                                @if ($seller->role === 1 || $seller->is_partner === 1 )
                                 <div class="d-flex align-items-center">
                                     <button class="toggle-permissions btn btn-sm">
                                         <h6 class="fw-bold border border-info p-2 text-info">Permissions <i class="fa fa-eye"></i></h6>
