@@ -183,7 +183,7 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
 
                     // Update per product charges details
                     $('#perProductCount').text(totalCount + ' x ' + response.data.perProductCharge);
@@ -225,7 +225,6 @@
                     console.log(xhr.responseText);
                 }
             });
-
 
         }
 
@@ -595,7 +594,7 @@
                     if (response.status == 0) {
                         toastr.error(response.data);
                         // for seller
-                    } else if (response.status == 2) {
+                    } else if (response.status == 2 || response.status == 5) {
 
                         var currentDate = new Date();
                         var formattedDate = (currentDate.getMonth() + 1) + '/' + currentDate
@@ -620,17 +619,20 @@
 
                         if (response.status == 2) {
                             toastr.success(response.message);
+                            // // generate slip
+                            makeSlip(response.data.orderId, $('#consignee_whatsaapp').val());
                         } else {
                             Swal.fire({
-                                title: "Order Dispatched",
+                                title: "Order Dispatched with Profit Deduction",
                                 text: response.message,
                                 icon: "warning",
                                 confirmButtonText: "OK",
-                            })
+                                customClass: {
+                                    htmlContainer: 'bg-warning text-white',
+                                }
+                            });
                         }
 
-                        // // generate slip
-                        makeSlip(response.data.orderId, $('#consignee_whatsaapp').val());
                         // reset all form fileds expect these
                         // Save the current value of pickupAddressCode
                         var pickupAddressCodeValue = $('#pickupAddressCode').val();
@@ -720,7 +722,7 @@
                             var articleId = this.getAttribute('data-article-id');
                             if (confirm(
                                     'Are you sure you want to remove this item from the Multan list?'
-                                    )) {
+                                )) {
                                 $.ajax({
                                     url: "{{ route('waoseller.update_multan_list') }}", // Your backend route
                                     method: 'POST',
@@ -730,16 +732,20 @@
                                     },
                                     success: function(response) {
                                         if (response.success) {
-                                            toastr.success('Item removed successfully!');
+                                            toastr.success(
+                                                'Item removed successfully!'
+                                                );
                                             location.reload();
                                         } else {
                                             alert(
-                                                'Failed to remove the item. Please try again.');
+                                                'Failed to remove the item. Please try again.'
+                                                );
                                         }
                                     },
                                     error: function() {
                                         alert(
-                                            'An error occurred while processing your request.');
+                                            'An error occurred while processing your request.'
+                                            );
                                     }
                                 });
                             }
@@ -752,7 +758,7 @@
         $('button[data-bs-toggle="modal"]').click(function() {
             const olddataValue = dataValue;
             dataValue = $(this).data('value');
-            if(dataValue != olddataValue && olddataValue != null){
+            if (dataValue != olddataValue && olddataValue != null) {
                 resetArticleCounts();
                 $('#orderdone')[0].reset();
             }

@@ -233,7 +233,7 @@
                         <div class="col-lg-auto d-none">
                             <div class="form-group">
                                 <label for="pickupAddressCode">Pickup Address <span class="fw-bold text-danger">*</span></label>
-            
+
                                 <select class="form-control" name="pickupAddressCode" id="pickupAddressCode">
                                     {{-- for team member set dummy --}}
                                     @if (auth()->user()->role === 4)
@@ -412,7 +412,7 @@
                             <label class="text-warning me-2">Amount Deduct from Balance</label>
                             <div class="form-group d-flex align-items-end">
                                 <input type="number" disabled id="purchaseTotalDisplay" class="form-control flex-grow-1">
-                                <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#deductResellerBalance"><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-primary ms-2" id="openDeductResellerBalance"><i class="fa fa-eye"></i></button>
                             </div>
                         </div>
                     </div>
@@ -578,6 +578,11 @@
     $(document).on('click', '.view_user_orders', function(e) {
         e.preventDefault();
         $('.user_orders_div').toggle(1000);
+    });
+
+    $(document).on('click', '#openDeductResellerBalance', function(e) {
+        e.preventDefault();
+        $("#deductResellerBalance").modal('show');
     });
 
     document.getElementById('item_quantity').addEventListener('input', updateOrderId);
