@@ -103,7 +103,9 @@ class WaoInventoryController extends Controller
                 } else {
                     return $query->WhereIf('role', 'Like', "%{$role}%")->where('is_partner', null);
                 }
-            })->where('controlled_by_admin',auth()->user()->id);
+            })
+            // ->where('controlled_by_admin',auth()->user()->id)
+            ->controlledByAdmin();
         $total_records = $records->count();
         $sellers = $records->paginate(20);
         $codes = TrackPlatformSetting::all();

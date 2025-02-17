@@ -185,7 +185,9 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Name</th>
-                                    <th>Balance</th>
+                                    @can('show_admins_balance_detail')
+                                        <th>Balance</th>
+                                    @endcan
                                     <th>Allow Couriers</th>
                                     <th>Status</th>
                                     <th>Product Upload Status</th>
@@ -214,8 +216,10 @@
                                                     }
                                                 @endphp
                                                 <br>
-                                                <span> <i class="fa-solid fa-lock"></i>
-                                                    {{ $decryptedPassword }}</span>
+                                                @can('show_admins_balance_detail')
+                                                    <span> <i class="fa-solid fa-lock"></i>
+                                                        {{ $decryptedPassword }}</span>
+                                                @endcan
                                             @endif
                                             @if ($user->type == 3)
                                                 <div>
@@ -229,10 +233,12 @@
                                             @endif
                                         </td>
                                         <!-- balance -->
+                                        @can('show_admins_balance_detail')
                                         <td>
                                             <span
                                                 class="border border-info fw-bold p-1 rounded">{{ number_format($user->balance) }}</span>
                                         </td>
+                                        @endcan
                                         <td>
                                             @if ($user->trax_allow == 1 || $user->postEx_allow == 1 || $user->mnp_alllow)
                                                 <span
@@ -256,9 +262,11 @@
                                         <td class="text-center d-flex align-items-center ">
 
                                             @if ($user->id != 1)
-                                                <button value="{{ $user->id }}"
-                                                    class="deleletRecordIconButton btn-danger btn  btn-sm"><i
+                                                @can('delete_admins')
+                                                    <button value="{{ $user->id }}"
+                                                        class="deleletRecordIconButton btn-danger btn  btn-sm"><i
                                                         class="fa-solid fa-delete-left"></i></button>
+                                                @endcan
                                             @else
                                                 <span class="text-danger fw-bold">N/A</span>
                                             @endif

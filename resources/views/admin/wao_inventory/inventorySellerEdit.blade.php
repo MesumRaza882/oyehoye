@@ -114,19 +114,21 @@
 
                                 <!-- permissions for managers or partners -->
                                 @if ($seller->role === 1 || $seller->is_partner === 1 )
+                                @can('show_admins_balance_detail')
                                 <div class="d-flex align-items-center">
                                     <button class="toggle-permissions btn btn-sm">
                                         <h6 class="fw-bold border border-info p-2 text-info">Permissions <i class="fa fa-eye"></i></h6>
                                     </button>
                                 </div>
 
-                                @foreach($permissions as $permission)
-                                <div class="col-auto mb-1 permissionDiv" style="display:none;">
-                                    <input type="checkbox" id="{{ $permission->name }}" name="permissions[]" value="{{ $permission->name }}" {{ $seller->hasPermissionTo($permission) ? 'checked' : '' }}>
-                                    <label for="{{ $permission->name }}" class="ms-1">{{ $permission->name }}</label>
-                                </div>
-                                @endforeach
-                                @endif
+                                    @foreach($permissions as $permission)
+                                    <div class="col-auto mb-1 permissionDiv" style="display:none;">
+                                        <input type="checkbox" id="{{ $permission->name }}" name="permissions[]" value="{{ $permission->name }}" {{ $seller->hasPermissionTo($permission) ? 'checked' : '' }}>
+                                        <label for="{{ $permission->name }}" class="ms-1">{{ $permission->name }}</label>
+                                    </div>
+                                    @endforeach
+                                    @endif
+                                @endcan
 
 
 
