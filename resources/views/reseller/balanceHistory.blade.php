@@ -35,7 +35,7 @@
                                 </select>
                             </div>
 
-                            @if (auth()->user()->id === 1)
+                            @if (auth()->user()->role == 1)
                             <!-- admins -->
                             <div class="col-lg-3 mb-2 mb-2 col-6">
                                 <label class="pb-0">Select Admin</label>
@@ -88,7 +88,7 @@
                     <table class="table table-hover table-striped active_table">
                         <thead>
                             <tr>
-                                <th>Order-Id</th>
+                                <th>Id</th>
                                 <th>Balance</th>
                                 <th>Status</th>
                                 <th>Note</th>

@@ -106,6 +106,7 @@ class WaoInventoryController extends Controller
             })
             // ->where('controlled_by_admin',auth()->user()->id)
             ->controlledByAdmin();
+
         $total_records = $records->count();
         $sellers = $records->paginate(20);
         $codes = TrackPlatformSetting::all();
@@ -277,7 +278,7 @@ class WaoInventoryController extends Controller
             $seller->syncPermissions($request->permissions);
             // if amount update then history create
             if ($request->balance) {
-                ResellerAmountHistory::create([
+                $test = ResellerAmountHistory::create([
                     'admin_id' => $sellerId,
                     'balance' => $request->balance,
                     'note' => $request->add_balance_note,

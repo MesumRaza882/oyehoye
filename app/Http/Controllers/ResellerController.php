@@ -71,10 +71,7 @@ class ResellerController extends Controller
         $enddate =  $request->toDate;
         $admins = Admin::whereHas('resellerAmountHistories')->get(['id', 'email']);
 
-        $allRecords = ResellerAmountHistory::
-            // selectRaw('DATE(date) as date, status,admin_id,  SUM(balance) as balance')
-            // ->groupBy('date', 'status', 'admin_id')
-            whereIf('status', 'LIKE', "%{$status}%")
+        $allRecords = ResellerAmountHistory::whereIf('status', 'LIKE', "%{$status}%")
             ->when($request->search_input, function ($query) use ($request) {
                 return $query->whereIf('order_id', 'LIKE', "%{$request->search_input}%");
             })
@@ -82,19 +79,13 @@ class ResellerController extends Controller
             // filter by admin
             ->when($request->admin_id, function ($query) use ($request) {
                 return $query->where('admin_id', $request->admin_id);
-            })->orderBy('date', 'desc')->with('admin:id,email');
-
-        // if not super admin then get admin his details only
-        if (auth()->user()->id != 1) {
-            $allRecords->where('admin_id', $admin_id);
-        }
-
+            })
+            ->filterByAdmin()
+            ->orderBy('date', 'desc')
+            ->with('admin:id,email');
         $totalBalance = $allRecords->get()->sum('balance');
-
         $recordsCount = $allRecords->count();
-        // Now, let's paginate the results
         $records = $allRecords->paginate($paginate_record);
-
         return view('reseller.balanceHistory', compact('records', 'recordsCount', 'totalBalance', 'admins'));
     }
 }

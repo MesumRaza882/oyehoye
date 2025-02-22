@@ -11,7 +11,12 @@ class ResellerAmountHistory extends Model
     use HasFactory, GlobalScopesTrait;
 
     protected $fillable = [
-        'date', 'admin_id', 'balance', 'status', 'order_id','note'
+        'date',
+        'admin_id',
+        'balance',
+        'status',
+        'order_id',
+        'note'
     ];
     public function admin()
     {
@@ -29,6 +34,17 @@ class ResellerAmountHistory extends Model
             $date = $startdate ?? $enddate;
             $query->whereDate('date', '=', $date);
         }
+        return $query;
+    }
+
+    public function scopeFilterByAdmin($query)
+    {
+        $user = auth()->user();
+        // if there is not manager/super admin then only get own histries
+        if ($user->role != 1) {
+            return $query->where('admin_id', $user->id);
+        }
+
         return $query;
     }
 }
