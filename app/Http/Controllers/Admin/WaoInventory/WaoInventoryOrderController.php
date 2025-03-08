@@ -44,6 +44,10 @@ class WaoInventoryOrderController extends Controller
             ->when($req->tracking_order_type, function ($query) use ($req) {
                 return $query->WhereIf('tracking_order_type', 'Like', "%{$req->tracking_order_type}%");
             })
+              // get orders for try to cancel to get payment reverse in inventory
+              ->when($req->get_cancel_to_return_orders, function ($query) {
+                return $query->cancelToReturnOrders();
+            })
             // filter by seller
             ->when($req->wao_seller_id, function ($query) use ($req) {
                 return $query->WhereIf('wao_seller_id', '=', $req->wao_seller_id);
@@ -324,7 +328,7 @@ class WaoInventoryOrderController extends Controller
                 ->orWhere('c_city_name', 'like', "%{$req->consignee_city_postEx}%")
                 ->orWhere('postex', 'like', "%{$req->consignee_city_postEx}%")
                 ->first()) {
-                return $this->success('This city in not in our database', 'Validation Error', 0);
+                return $this->success('This city in not in our database!', 'Validation Error', 0);
             }
 
 

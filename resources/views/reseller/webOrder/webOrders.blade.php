@@ -278,6 +278,9 @@
                                 </div>
                             </div>
                         </form>
+
+                        <a href="{{ route('waoseller.getWebOrders', ['is_partner' => 1, 'get_cancel_to_return_orders' => 1]) }}"
+                            class="btn btn-sm btn-info">Cancel to return orders</a>
                     </div>
                 </div>
                 <!-- end filter records -->

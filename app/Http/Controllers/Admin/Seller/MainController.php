@@ -229,6 +229,10 @@ class MainController extends Controller
             ->when($req->tracking_order_type, function ($query) use ($req) {
                 return $query->WhereIf('tracking_order_type', 'Like', "%{$req->tracking_order_type}%");
             })
+            // get orders for try to cancel to get payment reverse in inventory
+            ->when($req->get_cancel_to_return_orders, function ($query) {
+                return $query->cancelToReturnOrders();
+            })
             ->WhereIf('status', 'Like', "%{$orderStatus}%")
             ->filterByDate($startdate, $enddate)
             ->filterBlockOrders($req->blocked_orders)

@@ -8,7 +8,7 @@ use App\Traits\GlobalScopesTrait;
 
 class Order extends Model
 {
-    use HasFactory,GlobalScopesTrait;
+    use HasFactory, GlobalScopesTrait;
 
     // type 2 means website 1 for app
 
@@ -18,29 +18,44 @@ class Order extends Model
      * Re-Attempted
      * Advice-Added
      * CANCEL
-     * 
+     *
      */
     // is_warehouseTeam_order for reseller make order and will dipatch by admin
     // function getCreatedAtAttribute($date)
-    // {   
+    // {
     //     return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('Y-m-d');
     // }
     // is_returned_order defualt 0 when returned then 1 and confirmed to 2
     protected $fillable = [
-        'user_id','wao_seller_id','admin_id',
-        'name','tracking_order_type','postex_api_type',
+        'user_id',
+        'wao_seller_id',
+        'admin_id',
+        'name',
+        'tracking_order_type',
+        'postex_api_type',
         'phone',
-        'address','courier_tracking_id',
-        'country','status',
-        'city','city_id',
-        'amount','description',
+        'address',
+        'courier_tracking_id',
+        'country',
+        'status',
+        'city',
+        'city_id',
+        'amount',
+        'description',
         'charges',
         'grandTotal',
         'grandProfit',
-        'order_discount','track_created_at',
-        'date','time','is_warehouseTeam_order',
-        'is_returned_order','adjustment_note','payment_screenshot',
-        'is_commission_paid','commission_paid_note','cancel_note',
+        'order_discount',
+        'track_created_at',
+        'date',
+        'time',
+        'is_warehouseTeam_order',
+        'is_returned_order',
+        'adjustment_note',
+        'payment_screenshot',
+        'is_commission_paid',
+        'commission_paid_note',
+        'cancel_note',
     ];
 
     protected $casts = [
@@ -69,41 +84,44 @@ class Order extends Model
     }
     public function userdetail()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     public function waoSellerDetail()
     {
-        return $this->belongsTo(Admin::class,'wao_seller_id','id')->withTrashed();
+        return $this->belongsTo(Admin::class, 'wao_seller_id', 'id')->withTrashed();
     }
     public function waoAdminDetail()
     {
-        return $this->belongsTo(Admin::class,'admin_id','id')->withTrashed();
+        return $this->belongsTo(Admin::class, 'admin_id', 'id')->withTrashed();
     }
     public function citydetail()
     {
-        return $this->belongsTo(City::class,'city_id','id');
+        return $this->belongsTo(City::class, 'city_id', 'id');
     }
 
 
     public function scopefilterBlockOrders($q, $val)
     {
-        if($val == 1)
-        {
+        if ($val == 1) {
             $q->where('is_blocked_customer_order', $val);
-        }
-        else
-        {
+        } else {
             $q->where('is_blocked_customer_order', 0);
         }
     }
 
     public function scopeFilterByOrderStatus($query, $orderStatus)
     {
-        if($orderStatus){
+        if ($orderStatus) {
             return $query->whereHas('history', function ($subquery) use ($orderStatus) {
                 $subquery->where('history', $orderStatus);
             });
         }
         return $query;
+    }
+
+    public function scopeCancelToReturnOrders($query)
+    {
+        return $query->whereIn('status', ['Team Review your Order', 'DISPATCHED', 'Dispatched'])
+            ->where('is_cancel', '!=', '1')->orwhere('is_cancel', null);
     }
 }

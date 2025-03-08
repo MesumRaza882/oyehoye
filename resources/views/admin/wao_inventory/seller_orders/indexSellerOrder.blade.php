@@ -256,6 +256,10 @@
                                 </div>
                             </div>
                         </form>
+
+                        <a href="{{ route('waoseller.order.index', ['get_cancel_to_return_orders' => 1]) }}"
+                            class="btn btn-sm btn-info">Cancel to return orders</a>
+
                     </div>
                 </div>
                 <!-- end filter records -->
@@ -560,7 +564,7 @@
 
             });
 
-            //confirm return order 
+            //confirm return order
             $(document).on('click', '.confirm_order_return', function(e) {
                 e.preventDefault();
 
