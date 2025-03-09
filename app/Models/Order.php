@@ -121,7 +121,11 @@ class Order extends Model
 
     public function scopeCancelToReturnOrders($query)
     {
-        return $query->whereIn('status', ['Team Review your Order', 'DISPATCHED', 'Dispatched'])
-            ->where('is_cancel', '!=', '1')->orwhere('is_cancel', null);
+        return $query->where(function ($q) {
+            $q->whereIn('status', ['Team Review your Order', 'DISPATCHED', 'Dispatched']);
+        })->where(function ($q) {
+            $q->where('is_cancel', '!=', '1')
+                ->orWhereNull('is_cancel'); // Correct way to check null
+        })->where('created_at', '<=', now()->subHours(120)); // Orders older than 120 hours
     }
 }
