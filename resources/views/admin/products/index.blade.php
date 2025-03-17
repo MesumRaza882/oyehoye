@@ -240,7 +240,7 @@
 
             <!-- total record count -->
             <div class="col-md-10 d-flex align-items-start">
-                <p class="d-block p-1 px-2 bg-primary text-white">Products:<span class="ms-1">{{$total_records}}</span></p>
+                <p class="d-block p-1 px-2 bg-primary text-white">Products:<span class="ms-1">{{$items->total()}}</span></p>
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
@@ -394,6 +394,7 @@
                                 <span class="fw-bold">{{( $viewLuxury->soldItem <= 0 ) ? "SoldOut" : (( $viewLuxury->soldItem < 5 ) ? "Restoke Inventoey" : '' ) }}</span>
                                 <input class="form-control text-white text-center bg-dark" style="width: 70px;" type="text" name="soldItem[]" value="{{$viewLuxury->soldItem}}" data-product-id="{{$viewLuxury->id}}" disabled>
                                 <input class="form-control text-white text-center bg-info" style="width: 70px;" type="text" name="marketItem[]" value="{{$viewLuxury->markeetItem}}" data-product-id="{{$viewLuxury->id}}" disabled>
+                                <input class="form-control text-white text-center bg-warning" style="width: 70px;" type="text" name="discountItem[]" value="{{$viewLuxury->discount}}" data-product-id="{{$viewLuxury->id}}" disabled>
                             </td>
                             <td>
                                 <a href="{{$viewLuxury->thumbnail}}" target="_blank">
@@ -651,7 +652,7 @@ function freezUnfreezItems(action) {
 
         // reset function
         function reset() {
-            // $('.upd_image').val('');  
+            // $('.upd_image').val('');
             $('#video_container').hide(1000);
             $('.img_preview_container').hide(1000);
             $('.video').val('');
@@ -666,6 +667,9 @@ function freezUnfreezItems(action) {
 
         // Use the submit button id to trigger the Ajax call
         $('#submitBtn').on('click', function() {
+            var $btn = $(this);
+            $btn.prop('disabled', true).text('Updating...'); // Disable button and change text
+
             // Gather the data
             var formData = {
                 _token: $('input[name="_token"]').val(),
@@ -686,11 +690,13 @@ function freezUnfreezItems(action) {
                 var productId = $(this).data('product-id');
                 var quantity = $(this).val();
                 var marketItemValue = $(this).closest('td').find('input[name="marketItem[]"]').val(); // Get the marketItem value associated with the current soldItem
+                var discountItemValue = $(this).closest('td').find('input[name="discountItem[]"]').val(); // Get the discountItem value
 
                 formData.products.push({
                     id: productId,
                     quantity: quantity,
-                    marketItem: marketItemValue // Include marketItem along with id and quantity
+                    marketItem: marketItemValue, // Include marketItem along with id and quantity
+                    discountItem: discountItemValue
                 });
             });
 
@@ -701,11 +707,14 @@ function freezUnfreezItems(action) {
                 data: formData,
                 success: function(response) {
                     console.log(response);
-                    if (response.status === 2)
+                    if (response.status === 2){
                         toastr.success(response.message);
+                    }
+                    $btn.prop('disabled', false).text('Submit');
                 },
                 error: function(error) {
                     console.error(error);
+                    $btn.prop('disabled', false).text('Submit');
                 }
             });
         });
@@ -713,10 +722,12 @@ function freezUnfreezItems(action) {
         function enableEditing(isEditable) {
             var soldItemInputs = $('input[name="soldItem[]"]');
             var marketItemInputs = $('input[name="marketItem[]"]');
+            var discountItemInputs = $('input[name="discountItem[]"]');
             var submitBtn = $('#submitBtn');
 
             soldItemInputs.prop('disabled', !isEditable);
             marketItemInputs.prop('disabled', !isEditable);
+            discountItemInputs.prop('disabled', !isEditable);
 
             // Toggle the visibility of the "Edit" and "Submit" buttons
             $('#editBtn').toggle(!isEditable);

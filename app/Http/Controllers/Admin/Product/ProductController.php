@@ -12,9 +12,17 @@ use Exception;
 use App\Http\Requests\{ProductStoreRule, ProductUpdateRole};
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\ProductRepository;
 
 class ProductController extends Controller
 {
+    protected $productRepository;
+
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
     public function add()
     {
         $categories = category::get(['id', 'name']);
@@ -209,62 +217,10 @@ class ProductController extends Controller
     }
 
 
-    function all(Request $req)
+    function all(Request $request)
     {
-        // $pro = Product::where('article',333)->withTrashed()->first();
-        // $pro->restore();
-        // return 1;
-        $paginate_record = 15;
-        $status = 1;
-        $status_app = 1;
-        if ($req->records) {
-            $paginate_record = $req->records;
-        }
-        if ($req->status) {
-            $status = $req->status;
-        }
-        if ($req->status_app) {
-            $status_app = $req->status_app;
-        }
-
-        $product_upload_for = $req->product_upload_for ?: 1;
-        $categories = Category::get(['id', 'name']);
-        $records = Product::latest()->with('itemcategory:id,name')
-            ->select([
-                'id',
-                'name',
-                'price',
-                'video',
-                'category_id',
-                'profit',
-                'is_active_row',
-                'increase_perMin',
-                'purchase',
-                'thumbnail',
-                'soldItem',
-                'updated_at',
-                'soldstatus',
-                'markeetItem',
-                'is_freez_item',
-            ])
-            ->WhereIf('article', '=', $req->article)
-            ->when($req->product_upload_for, function ($query) use ($product_upload_for) {
-                return  $query->WhereIf('product_upload_for', '=', $product_upload_for);
-            })
-            ->WhereIf('name', 'Like', "%{$req->search}%")
-            ->filterStatus($status)
-            ->filterStatusApp($status_app)
-            ->withoutGlobalScope('unfreezed')
-            ->where(function ($q) use ($req) {
-                $q->WhereIf('name', 'Like', "%{$req->search_input}%")
-                    ->OrWhereIf('price', 'Like', "%{$req->search_input}%");
-            })
-            ->Wherehas('itemcategory', function ($q) use ($req) {
-                $q->WhereIf('name', 'Like', "%{$req->category}%");
-            });
-        $total_records = $records->count();
-        $items = $records->paginate($paginate_record);
-        return view('admin.products.index', compact('items', 'categories', 'total_records'));
+        $data = $this->productRepository->getAllProducts($request);
+        return view('admin.products.index', $data);
     }
 
     // view single product
@@ -364,7 +320,7 @@ class ProductController extends Controller
         foreach ($items as $item) {
             if ($dataValue === 'multanItems') {
                 $item->is_multan_list = 1;
-            }else{
+            } else {
                 $item->is_white_list = 1;
             }
             $item->save();
@@ -418,6 +374,7 @@ class ProductController extends Controller
             $quantity = isset($product['quantity']) ? $product['quantity'] : 0;
             $marketItem = isset($product['marketItem']) ? $product['marketItem'] : 0;
             $markeetPickup = isset($product['markeetPickup']) ? $product['markeetPickup'] : 0;
+            $discountItem = isset($product['discountItem']) ? $product['discountItem'] : 0;
 
             $productModel = Product::find($productId);
             if ($request->action === "resetPickup") {
@@ -429,6 +386,7 @@ class ProductController extends Controller
                 $productModel->update([
                     'soldItem' => $quantity >= 0 ? $quantity : $productModel->soldItem,
                     'markeetItem' => $marketItem >= 0 ? $marketItem : $productModel->markeetItem,
+                    'discount' => $discountItem >= 0 ? $discountItem : $productModel->discount,
                 ]);
             }
         }
