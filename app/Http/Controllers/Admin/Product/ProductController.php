@@ -16,6 +16,7 @@ use App\Repositories\ProductRepository;
 
 class ProductController extends Controller
 {
+
     protected $productRepository;
 
     public function __construct(ProductRepository $productRepository)
@@ -222,7 +223,6 @@ class ProductController extends Controller
         $data = $this->productRepository->getAllProducts($request);
         return view('admin.products.index', $data);
     }
-
     // view single product
     function edit($id)
     {

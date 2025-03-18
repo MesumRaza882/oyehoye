@@ -699,9 +699,9 @@ function freezUnfreezItems(action) {
                     discountItem: discountItemValue
                 });
             });
-
             // Submit data using Ajax
-            $.ajax({
+             // Submit data using Ajax
+             $.ajax({
                 url: "{{ route('updateQuantities') }}",
                 type: "POST",
                 data: formData,

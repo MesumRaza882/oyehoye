@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-use App\Models\Category;
+use App\Models\category;
 
 class ProductRepository
 {
@@ -14,7 +14,7 @@ class ProductRepository
         $status_app = $request->status_app ?: 1;
         $product_upload_for = $request->product_upload_for ?: 1;
 
-        $categories = Category::select(['id', 'name'])->get();
+        $categories = category::select(['id', 'name'])->get();
 
         $query = Product::latest()->with('itemcategory:id,name')
             ->select([
